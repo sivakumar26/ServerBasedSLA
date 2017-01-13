@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>server monitor</title>
+    <!-- Core CSS - Include with every page -->
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.js"></script>
+    <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
+    <link href="assets/plugins/bootstrap/bootstrap.css" rel="stylesheet" />
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="assets/plugins/pace/pace-theme-big-counter.css" rel="stylesheet" />
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/main-style.css" rel="stylesheet" />
+    <!-- Page-Level CSS -->
+    <link href="assets/plugins/morris/morris-0.4.3.min.css" rel="stylesheet" />
+    <!-- Loading Scripts -->
+    <script src="js/bootstrap-select.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/dataTables.bootstrap.min.js"></script>
+    <script src="js/Chart.min.js"></script>
+    <script src="js/fileinput.js"></script>
+    <script src="js/chartData.js"></script>
+    <script src="js/main.js"></script>
+
+
+</head>
+
+<body>
+
+<!--  wrapper -->
+<div id="wrapper">
+    <!-- navbar top -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="navbar">
+        <!-- navbar-header -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">
+                <p style="font-family: ‘Lucida Sans Unicode’, ‘Lucida Grande’, sans-serif; color:white; font-size:300%;">Server Monitor</p>
+            </a>
+        </div>
+        <!-- end navbar-header -->
+        <!-- navbar-top-links -->
+        <ul class="nav navbar-top-links navbar-right">
+            <!-- main dropdown -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <span class="top-label label label-danger">3</span><i class="fa fa-envelope fa-3x"></i>
+                </a>
+                <!-- dropdown-messages -->
+                <ul class="dropdown-menu dropdown-messages">
+                    <li>
+                        <a href="#">
+                            <div>
+                                <strong><span class=" label label-danger">Andrew Smith</span></strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                            </div>
+                            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <strong><span class=" label label-info">Jonney Depp</span></strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                            </div>
+                            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <strong><span class=" label label-success">Jonney Depp</span></strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                            </div>
+                            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a class="text-center" href="#">
+                            <strong>Read All Messages</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+                <!-- end dropdown-messages -->
+            </li>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <span class="top-label label label-success">4</span>  <i class="fa fa-tasks fa-3x"></i>
+                </a>
+                <!-- dropdown tasks -->
+                <ul class="dropdown-menu dropdown-tasks">
+                    <li>
+                        <a href="#">
+                            <div>
+                                <p>
+                                    <strong>Task 1</strong>
+                                    <span class="pull-right text-muted">40% Complete</span>
+                                </p>
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                                        <span class="sr-only">40% Complete (success)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <p>
+                                    <strong>Task 2</strong>
+                                    <span class="pull-right text-muted">20% Complete</span>
+                                </p>
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                                        <span class="sr-only">20% Complete</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <p>
+                                    <strong>Task 3</strong>
+                                    <span class="pull-right text-muted">60% Complete</span>
+                                </p>
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                        <span class="sr-only">60% Complete (warning)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <p>
+                                    <strong>Task 4</strong>
+                                    <span class="pull-right text-muted">80% Complete</span>
+                                </p>
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+                                        <span class="sr-only">80% Complete (danger)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a class="text-center" href="#">
+                            <strong>See All Tasks</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+                <!-- end dropdown-tasks -->
+            </li>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <span class="top-label label label-warning">5</span>  <i class="fa fa-bell fa-3x"></i>
+                </a>
+                <!-- dropdown alerts-->
+                <ul class="dropdown-menu dropdown-alerts">
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-comment fa-fw"></i>New Comment
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-twitter fa-fw"></i>3 New Followers
+                                <span class="pull-right text-muted small">12 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-envelope fa-fw"></i>Message Sent
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-tasks fa-fw"></i>New Task
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-upload fa-fw"></i>Server Rebooted
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a class="text-center" href="#">
+                            <strong>See All Alerts</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+                <!-- end dropdown-alerts -->
+            </li>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-3x"></i>
+                </a>
+                <!-- dropdown user-->
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="#"><i class="fa fa-user fa-fw"></i>User Profile</a>
+                    </li>
+                    <li><a href="#"><i class="fa fa-gear fa-fw"></i>Settings</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i>Logout</a>
+                    </li>
+                </ul>
+                <!-- end dropdown-user -->
+            </li>
+            <!-- end main dropdown -->
+        </ul>
+        <!-- end navbar-top-links -->
+
+    </nav>
+    <!-- end navbar top -->
+
+    <!-- navbar side -->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <!-- sidebar-collapse -->
+        <div class="sidebar-collapse">
+            <!-- side-menu -->
+            <ul class="nav" id="side-menu">
+                <li>
+                    <!-- user image section-->
+                    <div class="user-section">
+                        <div class="user-section-inner">
+                            <img src="assets/img/user.jpg" alt="">
+                        </div>
+                        <div class="user-info">
+                            <div><strong>Admin</strong></div>
+                            <div class="user-text-online">
+                                <span class="user-circle-online btn btn-success btn-circle "></span>&nbsp;Online
+                            </div>
+                        </div>
+                    </div>
+                    <!--end user image section-->
+                </li>
+                <li class="sidebar-search">
+                    <!-- search section-->
+                    <div class="input-group custom-search-form">
+                        <input type="text" class="form-control" placeholder="Search...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                    </div>
+                    <!--end search section-->
+                </li>
+                <li class="selected">
+                    <a href="index.html"><i class="fa fa-dashboard fa-fw"></i>Server Dashboard</a>
+                </li>
+
+            </ul>
+            <!-- end side-menu -->
+        </div>
+        <!-- end sidebar-collapse -->
+    </nav>
+    <!-- end navbar side -->
+    <!--  page-wrapper -->
+    <div id="page-wrapper">
+
+        <div class="row">
+            <!-- Page Header -->
+            <div class="col-lg-12">
+                <h1 class="page-header">Server Dashboard</h1>
+            </div>
+            <!--End Page Header -->
+        </div>
+
+        <div class="row">
+            <!-- Welcome -->
+            <div class="col-lg-12">
+                <div class="alert alert-info">
+                    <i></i><b>&nbsp;Hello ! </b>Welcome Back <b>Administrator </b>
+
+                </div>
+            </div>
+            <!--end  Welcome -->
+        </div>
+
+
+        <div class="row">
+            <!--quick info section -->
+            <div class="col-md-3">
+                <div class="alert alert-danger text-center">
+                    <i class="fa fa-tachometer fa-3x"></i>&nbsp;<br><b style="font-size:260%;" id="TotalCPUUsage"></b><br><b style="font-size:150%;">Total CPU Usage</b>
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="alert alert-success text-center">
+                    <i class="fa fa-tachometer fa-3x"></i>&nbsp;<br><b style="font-size:260%;" id="ServerCPUUsage"></b><br><b style="font-size:150%;">Server CPU Usage</b>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="alert alert-info text-center">
+                    <i class="fa fa-tachometer fa-3x"></i>&nbsp;<br><b style="font-size:260%;" id="MemoryUsage"></b><br><b style="font-size:150%;">Memory Usage</b>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="alert alert-warning text-center">
+                    <i class="fa fa-tachometer fa-3x"></i>&nbsp;<br><b style="font-size:260%;" id="MemoryAvailable"></b><br><b style="font-size:150%;">Memory Available</b>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="alert alert-danger text-center">
+                    <i class="fa fa-tachometer fa-3x"></i>&nbsp;<br><b style="font-size:260%;" id="NumberofRecentRequests"></b><br><b style="font-size:150%;">Recent Requests</b>
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="alert alert-warning text-center">
+                    <i class="fa fa-tachometer fa-3x"></i>&nbsp;<br><b style="font-size:260%;" id="CurrentConnections"></b><br><b style="font-size:150%;">Current Connections</b>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="alert alert-warning text-center">
+                    <i class="fa fa-tachometer fa-3x"></i>&nbsp;<br><b style="font-size:260%;" id="DatabaseStatus"></b><br><b style="font-size:150%;">Database Status</b>
+                </div>
+            </div>
+            <!--end quick info section -->
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+
+                <div id="container1" style="width: 800px; height: 400px; margin: 0 auto"></div>
+
+                <div id="container2" style="width: 800px; height: 400px; margin: 0 auto"></div>
+
+                <div id="container3" style="width: 800px; height: 400px; margin: 0 auto"></div>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+    </div>
+    <!-- end page-wrapper -->
+
+</div>
+<!-- end wrapper -->
+<script>
+    var chart1,chart2,chart3;
+    chart1 = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container1',
+            defaultSeriesType: 'spline',
+            events: {
+                load: updateConsole
+            }
+        },
+        title: {
+            text: 'CPU Usage'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150,
+            maxZoom: 20 * 1000
+        },
+        yAxis: {
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            title: {
+                text: 'Value',
+                margin: 80
+            }
+        },
+        series: [{
+            type: 'spline',
+            name: 'Total CPU',
+            data: []
+        },{
+            type: 'spline',
+            name: 'Node Server CPU',
+            data: []
+        }]
+    });
+    chart2 = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container2',
+            defaultSeriesType: 'spline',
+            events: {
+                load: updateConsole
+            }
+        },
+        title: {
+            text: 'Memory Usage'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150,
+            maxZoom: 20 * 1000
+        },
+        yAxis: {
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            title: {
+                text: 'Value',
+                margin: 80
+            }
+        },
+        series: [{
+            type: 'spline',
+            name: 'Memory Used',
+            data: []
+        },{
+            type: 'spline',
+            name: 'Memory Available',
+            data: []
+        }]
+    });
+    chart3 = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container3',
+            defaultSeriesType: 'spline',
+            events: {
+                load: updateConsole
+            }
+        },
+        title: {
+            text: 'Number of Recent Requests'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150,
+            maxZoom: 20 * 1000
+        },
+        yAxis: {
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            title: {
+                text: 'Value',
+                margin: 80
+            }
+        },
+        series: [{
+            type: 'spline',
+            name: 'number of requests',
+            data: []
+        }]
+    });
+    window.setInterval(updateConsole,2000);
+    function updateConsole(){
+        $.ajax({
+            url: "http://localhost:4000/Monitor",
+            type: 'GET',
+            dataType:'json',
+            success: function(data) {
+                console.log(data);
+                var server = data.ServerCPUUsage;
+                var tot = data.CPUUsage[0];
+                var mem = data.MemoryUsage.toFixed(5);
+                var memavail = data.MemoryAvailable;
+                var re = data.NumberOfRecentRequests;
+                var currentConn = data.CurrentConnections;
+                var databaseStatus = data.DatabaseStatus;
+                //var tomo = data['list']['2'].main;
+                document.getElementById('TotalCPUUsage').innerHTML= tot;
+                document.getElementById('ServerCPUUsage').innerHTML= server;
+                document.getElementById('MemoryUsage').innerHTML= mem;
+                document.getElementById('MemoryAvailable').innerHTML= memavail;
+                document.getElementById('NumberofRecentRequests').innerHTML= re;
+                document.getElementById('CurrentConnections').innerHTML= currentConn;
+                document.getElementById('DatabaseStatus').innerHTML= databaseStatus;
+
+                //update live chart
+
+
+                var series = chart1.series[0],
+                        shift = series.data.length > 20; // shift if the series is
+                var series = chart2.series[0],
+                        shift = series.data.length > 20;
+                var series = chart3.series[0],
+                        shift = series.data.length > 20;
+                // add the point
+                // var series1 = chart.series[1],
+                //        shift = series1.data.length > 20;
+
+                var a=(new Date() / 1000 | 0)*1000;
+
+                //Total CPU Usage - TotalCPUUsage
+                var b=[];
+                b.push(a);
+                b.push(parseInt(tot));
+                //Server CPU Usage - ServerCPUUsage
+                var c=[];
+                c.push(a);
+                c.push(parseInt(server));
+
+                //Memory Usage - MemoryUsage
+                var d=[];
+                d.push(a);
+                d.push(parseInt(mem*10));
+                //Memory Available - MemoryAvailable
+                var e=[];
+                e.push(a);
+                e.push(parseInt(memavail*10));
+
+                //Number of Recent Requests
+                var f=[];
+                f.push(a);
+                f.push(parseInt(re));
+
+                chart1.series[0].addPoint(b, true, shift);
+
+                chart1.series[1].addPoint(c, true, shift);
+
+
+                chart2.series[0].addPoint(d, true, shift);
+
+                chart2.series[1].addPoint(e, true, shift);
+
+
+                chart3.series[0].addPoint(f, true, shift);
+            },
+            error: function(e){
+                alert('Error: '+ e.message);
+            }
+        });
+    }
+</script>
+
+<!-- Core Scripts - Include with every page -->
+<script src="assets/plugins/jquery-1.10.2.js"></script>
+<script src="assets/plugins/bootstrap/bootstrap.min.js"></script>
+<script src="assets/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="assets/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="assets/plugins/pace/pace.js"></script>
+<script src="assets/scripts/Sensor Dashboard.js"></script>
+<!-- Page-Level Plugin Scripts-->
+
+</body>
+
+</html>

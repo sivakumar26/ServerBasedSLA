@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bufferutil", "bufferutil.vcproj", "{5D4DF786-A5E0-443D-6F6C-87A121879756}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "validation", "validation.vcproj", "{A9689610-2684-701E-3B50-043EBC8607BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D4DF786-A5E0-443D-6F6C-87A121879756}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5D4DF786-A5E0-443D-6F6C-87A121879756}.Debug|Win32.Build.0 = Debug|Win32
+		{5D4DF786-A5E0-443D-6F6C-87A121879756}.Release|Win32.ActiveCfg = Release|Win32
+		{5D4DF786-A5E0-443D-6F6C-87A121879756}.Release|Win32.Build.0 = Release|Win32
+		{A9689610-2684-701E-3B50-043EBC8607BB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A9689610-2684-701E-3B50-043EBC8607BB}.Debug|Win32.Build.0 = Debug|Win32
+		{A9689610-2684-701E-3B50-043EBC8607BB}.Release|Win32.ActiveCfg = Release|Win32
+		{A9689610-2684-701E-3B50-043EBC8607BB}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

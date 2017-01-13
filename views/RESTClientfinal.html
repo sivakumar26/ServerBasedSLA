@@ -1,0 +1,351 @@
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            document.getElementById("forceCloseCircuit").style.display = "none";
+            document.getElementById("forceOpenCircuit").style.display = "none";
+        });
+        var id=0;
+        var isFirstTry=true;
+        var currNumberOfRecentRequests;
+        var currNumberOfRetries=0;
+        var isSuccessful=false;
+        var timeCache={};
+        var toContinue=0;
+        var totalNumOfRetriesCompleted=0;
+        var timerObj;
+        var forcedOpen=0;
+
+        //variables decided by server variables
+        var maxNumberOfRetries=5;
+        //retries per min variables
+        var maxNumbRetriesPerMin=4;
+        var timeOut=300;
+        var circuitBreakerLimit=6;
+        var circuitBreakerCount=0;
+
+
+        //variables returned from server
+        var latency;
+        var databaseStatus;
+        var cpuUsage;
+        var memConsumption;
+        var serverCPUUsage;
+        var memAvailable;
+        var currentConnections;
+        var currNumberOfRecentRequests;
+
+        function test(){
+            currNumberOfRetries=0;
+            toContinue=0;
+            sendRequest();
+        }
+        function sendRequest() {
+            if(forcedOpen==0) {
+                //Getting user input values
+                if (isFirstTry == true) {
+                    document.getElementById('ErrorMsg').innerHTML = "";
+                    timeOut = document.getElementById("timeOut").value;
+                    maxNumberOfRetries = document.getElementById("maxNumberOfRetries").value;
+                    maxNumbRetriesPerMin = document.getElementById("maxNumbRetriesPerMin").value;
+                }
+                console.log(totalNumOfRetriesCompleted);
+                while (isSuccessful != true && totalNumOfRetriesCompleted < maxNumberOfRetries && toContinue == 0) {
+                    //setting id for latency
+                    if (isFirstTry == true) {
+                        var seconds = new Date().getTime();
+                        timeCache[id] = seconds;
+                    }
+                    else {
+                        var seconds = new Date().getTime();
+                        timeCache[id] = seconds;
+
+                        document.getElementById("forceCloseCircuit").style.display = "block";
+                        document.getElementById("forceOpenCircuit").style.display = "block";
+                    }
+                    console.log(currNumberOfRetries);
+                    // calculation of retry limit reached per minute
+                    var totalTimeSinceFirstRetryInMins = ((new Date().getTime()) - timeCache[id]) / 60000;
+                    if (currNumberOfRetries >= maxNumbRetriesPerMin) {
+                        console.log("inside if");
+                        var setWaitTime = 1 - totalTimeSinceFirstRetryInMins;
+                        toContinue = 1;
+                        var div = document.getElementById('ErrorMsg');
+                        div.innerHTML += "<br>We have reached the maximum number of retries for this minute. We'll retry back in " + setWaitTime + " minutes<br>";
+                        circuitBreaker(setWaitTime);
+                        break;
+                    }
+
+                    var div = document.getElementById('ErrorMsg');
+                    div.innerHTML += "Retry: " + totalNumOfRetriesCompleted + "<br>";
+                    totalNumOfRetriesCompleted += 1;
+                    currNumberOfRetries += 1;
+
+                    if(currNumberOfRetries!=1&&circuitBreakerCount>=circuitBreakerLimit){
+                        var div = document.getElementById('ErrorMsg');
+                        div.innerHTML += "Circuit Breaker enabled : Requests failed before reaching the server<br>";
+                    }
+                    else {
+                        $.ajax({
+                            url: "http://127.0.0.1:4000/ClientCall",
+                            type: 'GET',
+                            dataType: 'json',
+                            timeout: 5000,
+                            beforeSend: function (xhr) {
+                                console.log("inside before send");
+                                xhr.setRequestHeader("Request-Id", id);
+                            },
+                            error: function (e) {
+                                console.log("error");
+                                circuitBreakerCount += 1;
+                                var div = document.getElementById('ErrorMsg');
+                                div.innerHTML += "An Error occured while contacting the Server, retrying the request<br>";
+                                isFirstTry = false;
+                            },
+                            success: function (output, status, XMLHttpRequest) {
+                                //Latency implementation
+                                latency = new Date().getTime() - timeCache[XMLHttpRequest.getResponseHeader("Request-Id")];
+                                //CPU Usage
+
+                                cpuUsage = XMLHttpRequest.getResponseHeader("CPU-Usage");
+                                //Server CPU Usage
+                                serverCPUUsage = XMLHttpRequest.getResponseHeader("Server-CPU-Usage");
+                                //Memory Consumption
+                                memConsumption = XMLHttpRequest.getResponseHeader("Memory-Usage");
+                                //Memory Available
+                                memAvailable = XMLHttpRequest.getResponseHeader("Memory-Available");
+                                //Number of Recent Requests
+                                currNumberOfRecentRequests = XMLHttpRequest.getResponseHeader("Number-Of-Recent-Requests");
+                                //Current Connections
+                                currentConnections = XMLHttpRequest.getResponseHeader("Current-Connections");
+                                ///databaseStatus
+                                databaseStatus = XMLHttpRequest.getResponseHeader("Database-Status");
+
+                                if (databaseStatus == 1) {
+
+                                    var totalTimeSinceFirstRetryInMins = ((new Date().getTime()) - timeCache[id]) / 60000;
+                                    var setWaitTime = 1 - totalTimeSinceFirstRetryInMins;
+                                    circuitBreaker(setWaitTime);
+
+                                    document.getElementById("forceCloseCircuit").style.display = "block";
+                                    document.getElementById("forceOpenCircuit").style.display = "none";
+                                }
+                                else {
+
+                                    var div = document.getElementById('ErrorMsg');
+                                    div.innerHTML += "Contact with Server Successful! Please see the 'Calculated Variable Values' Section for the suggested configuration values<br>";
+                                    isSuccessful = true;
+                                    document.getElementById("timeOutCalc").value = timeOut;
+                                    //Calculation of values for variables
+
+                                    maxNumberOfRetries = parseInt(maxNumberOfRetries);
+                                    timeOut = parseInt(timeOut);
+                                    maxNumbRetriesPerMin = parseInt(maxNumbRetriesPerMin);
+
+                                    //Modify client variables on basis of latency
+                                    if (latency > 600) {
+                                        maxNumberOfRetries += 2;
+                                        maxNumbRetriesPerMin -= 3;
+                                        timeOut += 200;
+                                    } else if (latency > 400) {
+                                        maxNumberOfRetries += 1;
+                                        maxNumbRetriesPerMin -= 2;
+                                        timeOut += 100;
+                                    } else if (latency <= 400) {
+                                        //maxNumberOfRetries+= 1;
+                                        //maxNumbRetriesPerMin -= 1;
+                                        //timeOut+=100;
+                                    }
+
+                                    //Modify client variables on basis of CPU-Usage
+                                    if (cpuUsage > 80) {
+                                        maxNumberOfRetries += 2;
+                                        maxNumbRetriesPerMin -= 3;
+                                        timeOut += 100;
+                                    } else if (cpuUsage > 60) {
+                                        maxNumberOfRetries += 1;
+                                        maxNumbRetriesPerMin -= 2;
+                                        timeOut += 50;
+                                    } else if (cpuUsage <= 60) {
+                                        //maxNumberOfRetries+= 1;
+                                        //maxNumbRetriesPerMin -= 1;
+                                        //timeOut+=100;
+                                    }
+
+                                    //Modify client variables on basis of Memory Consumption
+                                    if (memConsumption > (memAvailable * 2)) {
+                                        maxNumberOfRetries += 2;
+                                        maxNumbRetriesPerMin -= 3;
+                                        timeOut += 100;
+                                    } else if (memConsumption > (memAvailable)) {
+                                        maxNumberOfRetries += 1;
+                                        maxNumbRetriesPerMin -= 2;
+                                        timeOut += 50;
+                                    } else {
+                                        //maxNumberOfRetries+= 1;
+                                        //maxNumbRetriesPerMin -= 1;
+                                        //timeOut+=100;
+                                    }
+
+
+                                    //Display of values calculated
+                                    document.getElementById("timeOutCalc").value = timeOut;
+                                    document.getElementById("maxNumberOfRetriesCalc").value = maxNumberOfRetries;
+                                    document.getElementById("maxNumbRetriesPerMinCalc").value = maxNumbRetriesPerMin;
+
+                                    document.getElementById("latency").innerHTML = latency;
+                                    document.getElementById("cpuUsage").innerHTML = cpuUsage;
+                                    document.getElementById("memConsumption").innerHTML = memConsumption;
+                                    document.getElementById("currNumberOfRecentRequests").innerHTML = currNumberOfRecentRequests;
+                                    document.getElementById("databaseStatus").innerHTML = databaseStatus;
+
+                                    //adding id for next request to use
+                                    id += 1;
+                                    circuitBreakerCount = 0;
+                                    //Setting values to default values for usage for next request
+                                }
+                            },
+                            async: false
+                        });
+                    }
+                }
+            }
+            if (totalNumOfRetriesCompleted == maxNumberOfRetries) {
+                var div = document.getElementById('ErrorMsg');
+                div.innerHTML += "We have reached the maximum number of retries allowes for this server. Please reinitiate the request<br>";
+                setInit();
+            }
+        }
+        function circuitBreaker(time){
+            console.log("circuit breaker triggered with waiting time "+time);
+            // timerObj =window.setTimeout( test, time*60000 );
+            timerObj =window.setTimeout( test, 10000 );
+            console.log("end of circuibreaker");
+        }
+        function setInit(){
+            isFirstTry=true;
+            currNumberOfRetries=0;
+            isSuccessful=false;
+            timeCache={};
+            toContinue=0;
+            totalNumOfRetriesCompleted=0;
+            circuitBreakerCount=0;
+        }
+
+        function forceCloseCircuit(){
+            forcedOpen=0;
+            clearTimeout(timerObj);
+            test();
+        }
+        function forceOpenCircuit(){
+            clearTimeout(timerObj);
+            forcedOpen=1;
+            // setInit();
+        }
+    </script>
+
+    <style>
+        .div1 {
+            border: 2px solid #100100;
+            border-radius: 25px;
+            width: 60%;
+            padding: 2px;
+            background-color: #B0BDD6;
+            background: linear-gradient(to right bottom, #FAFAF5, #B0BDD6);
+
+
+        }
+        .div2 {
+            padding: 10px;
+
+        }
+    </style>
+</head>
+
+<body style="background-color:#E8E8E8;">
+
+<div  class="div2">
+    <div  class="div1">
+        <h3><em><center>
+            <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+            Set initial configuration variables</center></em></h3>
+        <hr>
+        <form>
+
+            <table>
+                <tr>
+                    <td>
+                        &nbsp Max number of Retries allowed:</td>
+                    <td><input type="text" id="maxNumberOfRetries"><br></td>
+
+                </tr><tr>
+                <td>&nbsp Max Number of Retries Per minutes:</td><td>
+                <input type="text" id="maxNumbRetriesPerMin">(retries per min)<br></td></tr>
+
+                <tr>
+                    <td>
+                        &nbsp Timeout: </td>
+                    <td><input type="text" id="timeOut">(ms)<br></td>
+                </tr>
+                <tr><td>
+                    <br>&nbsp&nbsp
+                    <input type="button" value="Send Request" onclick="sendRequest()">
+                </td></tr>
+            </table>
+
+        </form>
+    </div>
+    <br>
+    <div  class="div1">
+        <h3><em><center>
+            <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+            Client-Server Communication Log
+
+        </center></em></h3>
+        <hr>
+        <input type="button" id="forceCloseCircuit" value="Force Close Circuit" onclick="forceCloseCircuit()">
+        <input type="button" id="forceOpenCircuit" value="Force Open Circuit" onclick="forceOpenCircuit()">
+        <p id="ErrorMsg"></p>
+        <h4><strong>&nbsp Data Gathered </strong></h4>
+
+        <table>
+            <tr><td>&nbsp Latency:</td><td><p id="latency"></p></td></tr>
+            <tr><td>&nbsp CPU Usage:</td><td><p id="cpuUsage"></p></td></tr>
+            <tr><td>&nbsp Memory Consumption:</td><td><p id="memConsumption"></p></td></tr>
+            <tr><td>&nbsp Current Number of Connections:</td><td><p id="currNumberOfRecentRequests"></p></td></tr>
+            <tr><td>&nbsp Database Status:</td><td><p id="databaseStatus"></p></td></tr>
+
+        </table>
+        <br>
+    </div>
+    <br>
+    <div  class="div1">
+        <h3><em><center>
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+            Measures Taken</center></em></h3>
+        <hr>
+        <table>
+            <tr><td>&nbsp Max number of Retries allowed:</td><td><input type="text" id="maxNumberOfRetriesCalc"><br></td></tr>
+            <tr><td>&nbsp Max Number of Retries Per minutes:</td><td> <input type="text" id="maxNumbRetriesPerMinCalc">(retries per min)<br></td></tr>
+            <tr><td>&nbsp Timeout:</td><td> <input type="text" id="timeOutCalc">(ms)<br></td></tr>
+        </table>
+        <br>
+    </div>
+</div>
+</body>
+</html>
